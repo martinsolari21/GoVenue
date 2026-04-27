@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>GoVenue - Detalle de evento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f7fb;
+      color: #111827;
+    }
+
+    header {
+      padding: 16px 24px;
+      background-color: #020617;
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header .logo {
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+    }
+
+    header .logo span {
+      color: #38bdf8;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .breadcrumb {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .breadcrumb a {
+      color: #0ea5e9;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .event-header {
+      background: #0b1120;
+      color: #f9fafb;
+      padding: 24px 20px;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+      margin-bottom: 18px;
+    }
+
+    .event-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .event-summary {
+      font-size: 0.9rem;
+      color: #cbd5f5;
+      margin-bottom: 14px;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: #38bdf8;
+      color: #0f172a;
+      padding: 9px 18px;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary:hover {
+      background: #0ea5e9;
+    }
+
+    .cta-note {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .layout-columns {
+      display: grid;
+      grid-template-columns: 2fr 1.4fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .block {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e5e7eb;
+      font-size: 0.9rem;
+    }
+
+    .block-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+
+    .block p {
+      margin: 3px 0;
+    }
+
+    .label {
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .status-pill {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      letter-spacing: 0.06em;
+    }
+
+    .secondary-cta {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .secondary-cta a {
+      text-decoration: none;
+      color: #0ea5e9;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .error-message {
+      margin-top: 18px;
+      font-size: 0.9rem;
+      color: #b91c1c;
+    }
+
+    footer {
+      padding: 16px 24px 24px;
+      font-size: 0.8rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .layout-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .event-header {
+        padding: 18px 16px;
+      }
+
+      .event-title {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" onclick="window.location.href='index.html'">
+      Go<span>Venue</span>
+    </div>
+    <div style="font-size: 0.8rem; opacity: 0.8;">
+      Detalle de evento
+    </div>
+  </header>
+
+  <main>
+    <div class="breadcrumb">
+      <a href="index.html">Inicio</a> · <a href="events.html">Eventos</a> · Detalle
+    </div>
+
+    <section id="event-header" class="event-header">
+      <div class="event-title" id="event-title">Cargando evento...</div>
+      <div class="event-summary" id="event-summary">
+        Estamos obteniendo los datos del evento desde la API.
+      </div>
+      <div class="cta-row">
+        <a class="btn-primary" id="contact-button" href="#" target="_blank" rel="noopener noreferrer">
+          Contactar al organizador
+        </a>
+        <span class="cta-note">
+          La gestión de inscripciones y pagos se realiza directamente con el organizador.
+        </span>
+      </div>
+    </section>
+
+    <section class="layout-columns">
+      <article class="block" id="event-info">
+        <div class="block-title">Información del evento</div>
+        <p><span class="label">Deporte:</span> <span id="event-sport">-</span></p>
+        <p><span class="label">Fecha:</span> <span id="event-date">-</span></p>
+        <p><span class="label">Horario:</span> <span id="event-time">-</span></p>
+        <p><span class="label">Precio / Entrada:</span> <span id="event-price">-</span></p>
+        <p id="event-extra"></p>
+        <span class="status-pill" id="event-status">SCHEDULED</span>
+      </article>
+
+      <article class="block" id="venue-info">
+        <div class="block-title">Sede</div>
+        <p><span class="label">Nombre:</span> <span id="venue-name">-</span></p>
+        <p><span class="label">Dirección:</span> <span id="venue-address">-</span></p>
+        <p><span class="label">Ciudad / Zona:</span> <span id="venue-city">-</span></p>
+      </article>
+    </section>
+
+    <section class="block" id="organizer-info">
+      <div class="block-title">Organizador</div>
+      <p><span class="label">Nombre:</span> <span id="organizer-name">-</span></p>
+      <p><span class="label">Contacto:</span> <span id="organizer-contact">-</span></p>
+    </section>
+
+    <div class="secondary-cta">
+      <a href="#" id="secondary-contact-link">Contactar al organizador</a>
+    </div>
+
+    <div class="error-message" id="error-message" style="display:none;">
+      No se pudo cargar el evento. Verificá el ID en la URL o que la API esté funcionando.
+    </div>
+  </main>
+
+  <footer>
+    GoVenue · MVP AMBA · Catálogo de eventos deportivos informativo. Contacto directo con el organizador.
+  </footer>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    function getEventIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    function formatPrice(price) {
+      if (price === null || price === undefined) return '—';
+      if (price === 0) return 'Gratis';
+      return '$' + price.toString();
+    }
+
+    function formatDate(dateStr) {
+      return dateStr || '—';
+    }
+
+    function formatTimeRange(start, end) {
+      if (!start && !end) return 'Horario a confirmar';
+      if (start && end) return `${start} a ${end}`;
+      if (start) return `${start} hs`;
+      return 'Horario a confirmar';
+    }
+
+    function buildContactLink(organizer) {
+      if (!organizer) return null;
+
+      if (organizer.phone) {
+        const cleanPhone = organizer.phone.replace(/[^0-9+]/g, '');
+        return {
+          type: 'whatsapp',
+          href: `https://wa.me/${cleanPhone}`,
+          label: `WhatsApp ${organizer.phone}`
+        };
+      }
+
+      if (organizer.email) {
+        return {
+          type: 'email',
+          href: `mailto:${organizer.email}`,
+          label: organizer.email
+        };
+      }
+
+      return null;
+    }
+
+    async function loadEvent() {
+      const id = getEventIdFromUrl();
+      const titleEl = document.getElementById('event-title');
+      const summaryEl = document.getElementById('event-summary');
+      const errorEl = document.getElementById('error-message');
+
+      if (!id) {
+        titleEl.textContent = 'Evento no especificado';
+        summaryEl.textContent = 'No se encontró un ID de evento en la URL.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/events/${id}`);
+        if (!res.ok) {
+          throw new Error('Respuesta no OK de la API');
+        }
+
+        const data = await res.json();
+
+        // Encabezado
+        titleEl.textContent = data.title || 'Evento sin título';
+        const venueCity = data.venue?.city || 'AMBA';
+        summaryEl.textContent = `${(data.sport || 'Deporte')} · ${venueCity} · ${formatDate(data.date)}`;
+
+        // Info evento
+        document.getElementById('event-sport').textContent = data.sport || '—';
+        document.getElementById('event-date').textContent = formatDate(data.date);
+        document.getElementById('event-time').textContent = formatTimeRange(data.start_time, data.end_time);
+        document.getElementById('event-price').textContent = formatPrice(data.price);
+        document.getElementById('event-status').textContent = (data.status || 'scheduled').toUpperCase();
+
+        // Sede
+        document.getElementById('venue-name').textContent = data.venue?.name || 'Sede a confirmar';
+        document.getElementById('venue-address').textContent = data.venue?.address || '—';
+        document.getElementById('venue-city').textContent = data.venue?.city || '—';
+
+        // Organizador
+        const organizerName = data.organizer?.name || 'Organizador no especificado';
+        document.getElementById('organizer-name').textContent = organizerName;
+
+        const contactInfo = buildContactLink(data.organizer);
+        const organizerContactEl = document.getElementById('organizer-contact');
+        const contactButton = document.getElementById('contact-button');
+        const secondaryContactLink = document.getElementById('secondary-contact-link');
+
+        if (contactInfo) {
+          organizerContactEl.textContent = contactInfo.label;
+          contactButton.href = contactInfo.href;
+          secondaryContactLink.href = contactInfo.href;
+        } else {
+          organizerContactEl.textContent = 'Información de contacto no disponible.';
+          contactButton.href = '#';
+          contactButton.onclick = (e) => e.preventDefault();
+          secondaryContactLink.href = '#';
+        }
+
+      } catch (error) {
+        console.error('Error al cargar el evento:', error);
+        titleEl.textContent = 'No se pudo cargar el evento';
+        summaryEl.textContent = 'Intentá volver al listado de eventos.';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadEvent);
+  </script>
+</body>
+</html>

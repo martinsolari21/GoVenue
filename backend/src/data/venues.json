@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "Complejo Futbol 5 Palermo",
+    "sport": "futbol",
+    "city": "CABA - Palermo",
+    "address": "Nueva dirección 999",
+    "description": "Actualizado desde Thunder Client",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "name": "Polideportivo Centro",
+    "sport": "futbol",
+    "city": "CABA - Almagro",
+    "address": "Nueva dirección 999",
+    "description": "Actualizado desde Thunder Client",
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "name": "Polideportivo Centro",
+    "sport": "futbol",
+    "city": "CABA - Almagro",
+    "address": "Nueva dirección 999",
+    "description": "Actualizado desde Thunder Client",
+    "is_active": false
+  }
+]

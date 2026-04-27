@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>GoVenue - Eventos en el AMBA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f7fb;
+      color: #111827;
+    }
+
+    header {
+      padding: 16px 24px;
+      background-color: #020617;
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header .logo {
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+    }
+
+    header .logo span {
+      color: #38bdf8;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .page-header {
+      margin-bottom: 18px;
+    }
+
+    .page-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .filters-bar {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .filters-bar label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #6b7280;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .filters-bar select {
+      min-width: 160px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.85rem;
+      background: #f9fafb;
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .event-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px 14px 16px;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+      border: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .event-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #0f172a;
+    }
+
+    .event-meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .event-meta strong {
+      color: #4b5563;
+    }
+
+    .event-tags {
+      font-size: 0.78rem;
+      color: #4b5563;
+      margin-bottom: 8px;
+    }
+
+    .event-price {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .event-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .event-status {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .btn-link {
+      font-size: 0.8rem;
+      text-decoration: none;
+      color: #0ea5e9;
+      font-weight: 600;
+    }
+
+    .btn-link:hover {
+      text-decoration: underline;
+    }
+
+    .state-message {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    footer {
+      padding: 16px 24px 24px;
+      font-size: 0.8rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      main {
+        padding: 18px 12px 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" onclick="window.location.href='index.html'">
+      Go<span>Venue</span>
+    </div>
+    <div style="font-size: 0.8rem; opacity: 0.8;">
+      Eventos en AMBA
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="page-title" id="page-title">
+        Eventos en el AMBA
+      </div>
+      <div class="page-subtitle">
+        Catálogo de actividades, torneos y partidos organizados. Datos informativos, con contacto directo al organizador.
+      </div>
+    </section>
+
+    <section class="filters-bar">
+      <div>
+        <label for="sport-filter">Deporte</label>
+        <select id="sport-filter">
+          <option value="all">Todos</option>
+          <option value="futbol">Fútbol</option>
+          <option value="tenis">Tenis</option>
+          <option value="padel">Pádel</option>
+          <option value="basquet">Básquet</option>
+          <option value="voley">Vóley</option>
+          <!-- se pueden agregar más deportes luego -->
+        </select>
+      </div>
+      <div class="state-message" id="state-message">
+        Cargando eventos...
+      </div>
+    </section>
+
+    <section>
+      <div class="events-grid" id="events-grid">
+        <!-- Acá se insertan las tarjetas por JS -->
+      </div>
+    </section>
+
+    <div class="state-message" id="empty-message" style="display:none;">
+      No encontramos eventos según tu búsqueda. Probá cambiar el deporte.
+    </div>
+  </main>
+
+  <footer>
+    GoVenue · MVP AMBA · Información orientativa. La gestión de inscripciones y pagos se realiza por fuera de la plataforma.
+  </footer>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    const sportFilter = document.getElementById('sport-filter');
+    const eventsGrid = document.getElementById('events-grid');
+    const stateMessage = document.getElementById('state-message');
+    const emptyMessage = document.getElementById('empty-message');
+    const pageTitle = document.getElementById('page-title');
+
+    let allEvents = [];
+    let venuesById = {};
+
+    function formatPrice(price) {
+      if (price === null || price === undefined) return '—';
+      if (price === 0) return 'Gratis';
+      return '$' + price.toString();
+    }
+
+    function formatDate(dateStr) {
+      // Por ahora mostramos la fecha tal cual (YYYY-MM-DD).
+      // Se puede mejorar más adelante.
+      return dateStr || '—';
+    }
+
+    function formatTimeRange(start, end) {
+      if (!start && !end) return 'Horario a confirmar';
+      if (start && end) return `${start} a ${end}`;
+      if (start) return `${start} hs`;
+      return 'Horario a confirmar';
+    }
+
+    function getVenueInfo(event) {
+      const venue = venuesById[event.venue_id];
+      if (!venue) {
+        return {
+          name: 'Sede a confirmar',
+          city: '',
+          address: ''
+        };
+      }
+      return venue;
+    }
+
+    function renderEvents() {
+      eventsGrid.innerHTML = '';
+      let filtered = allEvents;
+
+      const selectedSport = sportFilter.value;
+      if (selectedSport !== 'all') {
+        filtered = allEvents.filter(ev => (ev.sport || '').toLowerCase() === selectedSport);
+        pageTitle.textContent = `Eventos de ${selectedSport.charAt(0).toUpperCase() + selectedSport.slice(1)} en el AMBA`;
+      } else {
+        pageTitle.textContent = 'Eventos en el AMBA';
+      }
+
+      if (!filtered.length) {
+        emptyMessage.style.display = 'block';
+        return;
+      } else {
+        emptyMessage.style.display = 'none';
+      }
+
+      filtered.forEach(ev => {
+        const venue = getVenueInfo(ev);
+        const card = document.createElement('article');
+        card.className = 'event-card';
+
+        const title = document.createElement('div');
+        title.className = 'event-title';
+        title.textContent = ev.title || 'Evento sin título';
+
+        const meta = document.createElement('div');
+        meta.className = 'event-meta';
+        meta.innerHTML = `
+          <strong>${(ev.sport || 'Deporte')}</strong> · ${venue.city || 'AMBA'}<br>
+          ${formatDate(ev.date)} · ${formatTimeRange(ev.start_time, ev.end_time)}
+        `;
+
+        const tags = document.createElement('div');
+        tags.className = 'event-tags';
+        tags.textContent = venue.name || 'Sede a confirmar';
+
+        const price = document.createElement('div');
+        price.className = 'event-price';
+        price.textContent = 'Entrada / Inscripción: ' + formatPrice(ev.price);
+
+        const footer = document.createElement('div');
+        footer.className = 'event-footer';
+
+        const status = document.createElement('div');
+        status.className = 'event-status';
+        status.textContent = (ev.status || 'scheduled').toUpperCase();
+
+        const link = document.createElement('a');
+link.className = 'btn-link';
+link.href = `event.html?id=${ev.id}`;
+link.textContent = 'Ver más';
+
+
+        footer.appendChild(status);
+        footer.appendChild(link);
+
+        card.appendChild(title);
+        card.appendChild(meta);
+        card.appendChild(tags);
+        card.appendChild(price);
+        card.appendChild(footer);
+
+        eventsGrid.appendChild(card);
+      });
+    }
+
+    async function fetchData() {
+      try {
+        stateMessage.textContent = 'Cargando eventos desde la API...';
+
+        const [venuesRes, eventsRes] = await Promise.all([
+          fetch(API_BASE + '/venues'),
+          fetch(API_BASE + '/events')
+        ]);
+
+        const venues = await venuesRes.json();
+        const events = await eventsRes.json();
+
+        venuesById = {};
+        venues.forEach(v => {
+          venuesById[v.id] = v;
+        });
+
+        allEvents = events;
+        stateMessage.textContent = `Mostrando ${events.length} evento(s).`;
+        renderEvents();
+      } catch (error) {
+        console.error('Error al cargar datos:', error);
+        stateMessage.textContent = 'No se pudieron cargar los eventos. Verificá que el backend esté corriendo.';
+      }
+    }
+
+    sportFilter.addEventListener('change', () => {
+      renderEvents();
+    });
+
+    // Al cargar la página:
+    fetchData();
+  </script>
+</body>
+</html>
