@@ -8,6 +8,10 @@ export default function EventoDetalle() {
   const [evento, setEvento] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [form, setForm] = useState({ nombre: '', email: '', mensaje: '' });
+  const [enviando, setEnviando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
 
   useEffect(() => {
     eventosService.obtener(id)
@@ -16,9 +20,31 @@ export default function EventoDetalle() {
       .finally(() => setCargando(false));
   }, [id]);
 
+  // Cerrar modal con Escape
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === 'Escape') setModalAbierto(false); };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
+
   const formatFechaLarga = (fecha) => {
     const d = new Date(fecha);
     return d.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
+  const handleEnviar = async (e) => {
+    e.preventDefault();
+    setEnviando(true);
+    // Simulamos el envío (en el futuro puede conectarse a un servicio de email)
+    await new Promise(r => setTimeout(r, 1200));
+    setEnviando(false);
+    setEnviado(true);
+  };
+
+  const handleCerrarModal = () => {
+    setModalAbierto(false);
+    setEnviado(false);
+    setForm({ nombre: '', email: '', mensaje: '' });
   };
 
   return (
@@ -52,12 +78,50 @@ export default function EventoDetalle() {
         .det-org-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.2); display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1rem; color: #22c55e; flex-shrink: 0; }
         .det-center { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 1rem; color: #555; }
         .det-spinner { width: 24px; height: 24px; border: 2px solid rgba(34,197,94,0.2); border-top-color: #22c55e; border-radius: 50%; animation: spin 0.7s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
         .det-error-icon { font-size: 3rem; }
         .det-error-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; font-weight: 700; text-transform: uppercase; color: #666; }
         .det-btn-volver { background: none; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; color: #aaa; font-family: 'Barlow', sans-serif; font-size: 0.9rem; padding: 0.6rem 1.2rem; border-radius: 8px; transition: all 0.2s; }
         .det-btn-volver:hover { color: #fff; }
-        @media (max-width: 640px) { .det-nav { padding: 1rem 1.2rem; } .det-wrap { padding: 2rem 1.2rem 4rem; } .det-grid { grid-template-columns: 1fr; } .det-cta { flex-direction: column; } }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1.5rem; animation: fadeIn 0.15s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-box { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 2rem; width: 100%; max-width: 480px; animation: slideUp 0.2s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
+        .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; }
+        .modal-title span { color: #22c55e; }
+        .modal-close { background: none; border: none; cursor: pointer; color: #555; font-size: 1.4rem; line-height: 1; padding: 0.2rem; transition: color 0.2s; }
+        .modal-close:hover { color: #fff; }
+        .modal-evento { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #666; }
+        .modal-evento strong { color: #f0f0f0; display: block; font-size: 0.95rem; margin-bottom: 0.15rem; }
+        .modal-field { margin-bottom: 1rem; }
+        .modal-label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #555; font-weight: 600; margin-bottom: 0.4rem; }
+        .modal-input, .modal-textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: #f0f0f0; font-family: 'Barlow', sans-serif; font-size: 0.95rem; padding: 0.75rem 0.9rem; border-radius: 8px; outline: none; transition: border-color 0.2s; }
+        .modal-input:focus, .modal-textarea:focus { border-color: #22c55e; }
+        .modal-input::placeholder, .modal-textarea::placeholder { color: #444; }
+        .modal-textarea { resize: vertical; min-height: 100px; }
+        .modal-btn { width: 100%; background: #22c55e; color: #000; border: none; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 0.9rem; border-radius: 10px; transition: background 0.2s; margin-top: 0.5rem; }
+        .modal-btn:hover:not(:disabled) { background: #16a34a; }
+        .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .modal-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.2); border-top-color: #000; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 0.5rem; }
+
+        /* ÉXITO */
+        .modal-exito { text-align: center; padding: 1rem 0; }
+        .modal-exito-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .modal-exito-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.5rem; color: #22c55e; }
+        .modal-exito-sub { color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; }
+        .modal-btn-cerrar { background: none; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; color: #aaa; font-family: 'Barlow', sans-serif; font-size: 0.95rem; padding: 0.7rem 1.5rem; border-radius: 8px; transition: all 0.2s; }
+        .modal-btn-cerrar:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 640px) {
+          .det-nav { padding: 1rem 1.2rem; }
+          .det-wrap { padding: 2rem 1.2rem 4rem; }
+          .det-grid { grid-template-columns: 1fr; }
+          .det-cta { flex-direction: column; }
+        }
       `}</style>
 
       <div className="det-page">
@@ -97,7 +161,9 @@ export default function EventoDetalle() {
                 <div className="det-precio">{evento.precio ? `$${Number(evento.precio).toLocaleString('es-AR')}` : 'Gratis'}</div>
                 <div className="det-precio-sub">por persona · {evento.cupos} cupos disponibles</div>
               </div>
-              <button className="det-btn-contactar">Contactar organizador →</button>
+              <button className="det-btn-contactar" onClick={() => setModalAbierto(true)}>
+                Contactar organizador →
+              </button>
             </div>
             <div className="det-organizador">
               <div className="det-org-avatar">{evento.organizador?.nombre?.charAt(0).toUpperCase()}</div>
@@ -106,6 +172,54 @@ export default function EventoDetalle() {
           </div>
         )}
       </div>
+
+      {/* MODAL CONTACTO */}
+      {modalAbierto && evento && (
+        <div className="modal-overlay" onClick={(e) => { if (e.target.classList.contains('modal-overlay')) handleCerrarModal(); }}>
+          <div className="modal-box">
+            {enviado ? (
+              <div className="modal-exito">
+                <div className="modal-exito-icon">✅</div>
+                <div className="modal-exito-title">¡Mensaje enviado!</div>
+                <p className="modal-exito-sub">
+                  Le avisamos a <strong>{evento.organizador?.nombre}</strong> que querés sumarte.<br />
+                  Te va a contactar a la brevedad.
+                </p>
+                <button className="modal-btn-cerrar" onClick={handleCerrarModal}>Cerrar</button>
+              </div>
+            ) : (
+              <>
+                <div className="modal-header">
+                  <div className="modal-title">Contactar <span>organizador</span></div>
+                  <button className="modal-close" onClick={handleCerrarModal}>✕</button>
+                </div>
+                <div className="modal-evento">
+                  <strong>{evento.titulo}</strong>
+                  {evento.deporte?.nombre} · {evento.venue?.nombre} · {evento.horaInicio}–{evento.horaFin}
+                </div>
+                <form onSubmit={handleEnviar}>
+                  <div className="modal-field">
+                    <label className="modal-label">Tu nombre *</label>
+                    <input className="modal-input" type="text" placeholder="Nombre y apellido" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} required />
+                  </div>
+                  <div className="modal-field">
+                    <label className="modal-label">Tu email *</label>
+                    <input className="modal-input" type="email" placeholder="tu@email.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
+                  </div>
+                  <div className="modal-field">
+                    <label className="modal-label">Mensaje *</label>
+                    <textarea className="modal-textarea" placeholder={`Hola ${evento.organizador?.nombre}, me interesa sumarme al evento...`} value={form.mensaje} onChange={e => setForm({...form, mensaje: e.target.value})} required />
+                  </div>
+                  <button className="modal-btn" disabled={enviando}>
+                    {enviando && <span className="modal-spinner" />}
+                    {enviando ? 'Enviando...' : 'Enviar mensaje →'}
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
