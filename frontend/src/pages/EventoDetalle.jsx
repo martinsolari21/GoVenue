@@ -165,9 +165,9 @@ export default function EventoDetalle() {
                 Contactar organizador →
               </button>
             </div>
-            <div className="det-organizador">
+            <div className="det-organizador" onClick={() => navigate(`/organizador/${evento.organizadorId}`)} style={{cursor:'pointer'}}>
               <div className="det-org-avatar">{evento.organizador?.nombre?.charAt(0).toUpperCase()}</div>
-              <span>Organizado por <strong style={{color:'#f0f0f0'}}>{evento.organizador?.nombre}</strong></span>
+              <span>Organizado por <strong style={{color:'#22c55e', textDecoration:'underline'}}>{evento.organizador?.nombre}</strong></span>
             </div>
           </div>
         )}
