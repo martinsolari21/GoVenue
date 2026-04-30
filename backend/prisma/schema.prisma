@@ -21,7 +21,7 @@ model Organizador {
 model Localidad {
   id     Int      @id @default(autoincrement())
   nombre String
-  zona   String   // Ej: "GBA Norte", "GBA Sur", "CABA"
+  zona   String
   venues Venue[]
 
   @@map("localidades")
@@ -29,7 +29,7 @@ model Localidad {
 
 model Deporte {
   id     Int      @id @default(autoincrement())
-  nombre String   @unique // Fútbol, Pádel, Tenis, Hockey, Básquet
+  nombre String   @unique
   icono  String?
   eventos Evento[]
 
@@ -49,23 +49,24 @@ model Venue {
 }
 
 model Evento {
-  id            Int         @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   titulo        String
   descripcion   String?
   fecha         DateTime
-  horaInicio    String      // "19:00"
-  horaFin       String      // "20:30"
+  horaInicio    String
+  horaFin       String
   cupos         Int
   precio        Decimal?
+  vistas        Int          @default(0)
   estado        EstadoEvento @default(BORRADOR)
   deporteId     Int
-  deporte       Deporte     @relation(fields: [deporteId], references: [id])
+  deporte       Deporte      @relation(fields: [deporteId], references: [id])
   venueId       Int
-  venue         Venue       @relation(fields: [venueId], references: [id])
+  venue         Venue        @relation(fields: [venueId], references: [id])
   organizadorId Int
-  organizador   Organizador @relation(fields: [organizadorId], references: [id])
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  organizador   Organizador  @relation(fields: [organizadorId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
   @@map("eventos")
 }

@@ -4,7 +4,7 @@ const { verificarToken } = require('../middlewares/auth.middleware');
 
 // GET /api/eventos — público, con filtros opcionales
 router.get('/', async (req, res) => {
-  const { deporte, localidad, fecha } = req.query;
+  const { deporte, localidad, fecha, q } = req.query;
   const where = { estado: 'PUBLICADO' };
 
   if (deporte) where.deporteId = Number(deporte);
@@ -12,6 +12,12 @@ router.get('/', async (req, res) => {
   if (fecha) {
     const d = new Date(fecha);
     where.fecha = { gte: d, lt: new Date(d.getTime() + 86400000) };
+  }
+  if (q) {
+    where.OR = [
+      { titulo: { contains: q, mode: 'insensitive' } },
+      { descripcion: { contains: q, mode: 'insensitive' } },
+    ];
   }
 
   try {
@@ -26,21 +32,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/eventos/:id — público
-router.get('/:id', async (req, res) => {
-  try {
-    const evento = await prisma.evento.findUnique({
-      where: { id: Number(req.params.id) },
-      include: { deporte: true, venue: { include: { localidad: true } }, organizador: { select: { nombre: true } } },
-    });
-    if (!evento) return res.status(404).json({ error: 'Evento no encontrado' });
-    res.json(evento);
-  } catch (err) {
-    res.status(500).json({ error: 'Error al obtener evento' });
-  }
-});
-
-// GET /api/eventos/mis-eventos — organizador autenticado
+// GET /api/eventos/organizador/mis-eventos — organizador autenticado
 router.get('/organizador/mis-eventos', verificarToken, async (req, res) => {
   try {
     const eventos = await prisma.evento.findMany({
@@ -51,6 +43,27 @@ router.get('/organizador/mis-eventos', verificarToken, async (req, res) => {
     res.json(eventos);
   } catch (err) {
     res.status(500).json({ error: 'Error al obtener eventos' });
+  }
+});
+
+// GET /api/eventos/:id — público, incrementa vistas
+router.get('/:id', async (req, res) => {
+  try {
+    const evento = await prisma.evento.findUnique({
+      where: { id: Number(req.params.id) },
+      include: { deporte: true, venue: { include: { localidad: true } }, organizador: { select: { nombre: true } } },
+    });
+    if (!evento) return res.status(404).json({ error: 'Evento no encontrado' });
+
+    // Incrementar vistas
+    await prisma.evento.update({
+      where: { id: Number(req.params.id) },
+      data: { vistas: { increment: 1 } },
+    });
+
+    res.json({ ...evento, vistas: (evento.vistas || 0) + 1 });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener evento' });
   }
 });
 
@@ -89,9 +102,20 @@ router.patch('/:id', verificarToken, async (req, res) => {
     if (evento.organizadorId !== req.organizador.id)
       return res.status(403).json({ error: 'No tenés permiso para editar este evento' });
 
+    const { titulo, descripcion, fecha, horaInicio, horaFin, cupos, precio, estado } = req.body;
+    const data = {};
+    if (titulo) data.titulo = titulo;
+    if (descripcion !== undefined) data.descripcion = descripcion;
+    if (fecha) data.fecha = new Date(fecha);
+    if (horaInicio) data.horaInicio = horaInicio;
+    if (horaFin) data.horaFin = horaFin;
+    if (cupos) data.cupos = Number(cupos);
+    if (precio !== undefined) data.precio = precio ? Number(precio) : null;
+    if (estado) data.estado = estado;
+
     const actualizado = await prisma.evento.update({
       where: { id },
-      data: req.body,
+      data,
       include: { deporte: true, venue: { include: { localidad: true } } },
     });
     res.json(actualizado);
