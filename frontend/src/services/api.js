@@ -15,6 +15,18 @@ export const authService = {
   register: (data) => api.post('/api/auth/register', data),
 };
 
+export const jugadoresService = {
+  login: (data) => api.post('/api/jugadores/login', data),
+  register: (data) => api.post('/api/jugadores/register', data),
+  misInscripciones: () => api.get('/api/jugadores/mis-inscripciones'),
+};
+
+export const inscripcionesService = {
+  inscribirse: (eventoId) => api.post('/api/inscripciones', { eventoId }),
+  cancelar: (eventoId) => api.delete(`/api/inscripciones/${eventoId}`),
+  getInscriptos: (eventoId) => api.get(`/api/inscripciones/evento/${eventoId}`),
+};
+
 export const eventosService = {
   listar: (params) => api.get('/api/eventos', { params }),
   obtener: (id) => api.get(`/api/eventos/${id}`),

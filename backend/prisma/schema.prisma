@@ -18,8 +18,22 @@ model Organizador {
   @@map("organizadores")
 }
 
+model Jugador {
+  id            Int            @id @default(autoincrement())
+  nombre        String
+  email         String         @unique
+  password      String
+  telefono      String?
+  ciudad        String?
+  provincia     String?        @default("Buenos Aires")
+  createdAt     DateTime       @default(now())
+  inscripciones Inscripcion[]
+
+  @@map("jugadores")
+}
+
 model Localidad {
-  id     Int      @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   nombre String
   zona   String
   venues Venue[]
@@ -28,9 +42,9 @@ model Localidad {
 }
 
 model Deporte {
-  id     Int      @id @default(autoincrement())
-  nombre String   @unique
-  icono  String?
+  id      Int      @id @default(autoincrement())
+  nombre  String   @unique
+  icono   String?
   eventos Evento[]
 
   @@map("deportes")
@@ -49,7 +63,7 @@ model Venue {
 }
 
 model Evento {
-  id            Int          @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   titulo        String
   descripcion   String?
   fecha         DateTime
@@ -57,18 +71,32 @@ model Evento {
   horaFin       String
   cupos         Int
   precio        Decimal?
-  vistas        Int          @default(0)
-  estado        EstadoEvento @default(BORRADOR)
+  vistas        Int           @default(0)
+  estado        EstadoEvento  @default(BORRADOR)
   deporteId     Int
-  deporte       Deporte      @relation(fields: [deporteId], references: [id])
+  deporte       Deporte       @relation(fields: [deporteId], references: [id])
   venueId       Int
-  venue         Venue        @relation(fields: [venueId], references: [id])
+  venue         Venue         @relation(fields: [venueId], references: [id])
   organizadorId Int
-  organizador   Organizador  @relation(fields: [organizadorId], references: [id])
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  organizador   Organizador   @relation(fields: [organizadorId], references: [id])
+  inscripciones Inscripcion[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   @@map("eventos")
+}
+
+model Inscripcion {
+  id        Int                @id @default(autoincrement())
+  eventoId  Int
+  evento    Evento             @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  jugadorId Int
+  jugador   Jugador            @relation(fields: [jugadorId], references: [id], onDelete: Cascade)
+  estado    EstadoInscripcion  @default(INSCRIPTO)
+  createdAt DateTime           @default(now())
+
+  @@unique([eventoId, jugadorId])
+  @@map("inscripciones")
 }
 
 enum EstadoEvento {
@@ -76,4 +104,10 @@ enum EstadoEvento {
   PUBLICADO
   CANCELADO
   FINALIZADO
+}
+
+enum EstadoInscripcion {
+  INSCRIPTO
+  CANCELADO
+  LISTA_ESPERA
 }
